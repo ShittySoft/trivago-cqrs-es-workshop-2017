@@ -1,0 +1,7 @@
+{
+  "require": {
+    "php":                   "^7.0",
+    "prooph/service-bus":    "~5.0",
+    "prooph/event-sourcing": "~4.0"
+  }
+}
