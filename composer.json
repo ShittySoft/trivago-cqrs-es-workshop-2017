@@ -1,7 +1,8 @@
 {
   "require": {
-    "php":                   "^7.0",
-    "prooph/service-bus":    "~5.0",
-    "prooph/event-sourcing": "~4.0"
+    "php":                           "^7.0",
+    "prooph/service-bus":            "~5.0",
+    "prooph/event-sourcing":         "~4.0",
+    "zendframework/zend-expressive": "^1.0"
   }
 }
