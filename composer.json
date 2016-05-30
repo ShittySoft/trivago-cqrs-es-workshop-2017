@@ -1,8 +1,18 @@
 {
   "require": {
-    "php":                           "^7.0",
-    "prooph/service-bus":            "~5.0",
-    "prooph/event-sourcing":         "~4.0",
-    "zendframework/zend-expressive": "^1.0"
+    "php": "^7.0",
+    "prooph/service-bus": "~5.0",
+    "prooph/event-sourcing": "~4.0",
+    "zendframework/zend-expressive": "^0.5.3",
+    "zendframework/zend-servicemanager": "^3.0",
+    "zendframework/zend-expressive-fastroute": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Hanoi\\": "src/"
+    }
+  },
+  "scripts": {
+    "serve": "php -S 0.0.0.0:8080 -t public/"
   }
 }
