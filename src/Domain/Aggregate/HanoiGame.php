@@ -27,14 +27,12 @@ final class HanoiGame extends AggregateRoot
         $aggregate->uuid             = Uuid::uuid4();
         $aggregate->quantityOfPieces = $quantity;
 
-        $aggregate->recordThat(
-            NewGameWasCreated::fromQuantityOfPieces($quantity)
-        );
+        $aggregate->recordThat(NewGameWasCreated::fromQuantityOfPieces($quantity));
     }
 
     public function movePieceToColumn()
     {
-
+        // TODO: implement on the class
     }
 
     /**
