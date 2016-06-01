@@ -8,6 +8,8 @@ use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\EventStore\EventStore;
+use Prooph\EventStoreBusBridge\TransactionManager;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 
@@ -18,8 +20,12 @@ final class CommandBus
         $commandBus = new \Prooph\ServiceBus\CommandBus();
 
         $commandBus->utilize(new ServiceLocatorPlugin($container));
-
         $commandBus->utilize($this->buildCommandRouter());
+
+        $transactionManager = new TransactionManager();
+        $transactionManager->setUp($container->get(EventStore::class));
+
+        $commandBus->utilize($transactionManager);
 
         return $commandBus;
     }
