@@ -1,11 +1,15 @@
 {
   "require": {
     "php": "^7.0",
-    "prooph/service-bus": "~5.0",
+    "doctrine/dbal": "~2.5",
     "prooph/event-sourcing": "~4.0",
+    "prooph/event-store": "^6.0",
+    "prooph/event-store-bus-bridge": "^2.0",
+    "prooph/event-store-doctrine-adapter": "^3.0",
+    "prooph/service-bus": "~5.0",
     "zendframework/zend-expressive": "^0.5.3",
-    "zendframework/zend-servicemanager": "^3.0",
-    "zendframework/zend-expressive-fastroute": "^1.0"
+    "zendframework/zend-expressive-fastroute": "^1.0",
+    "zendframework/zend-servicemanager": "^3.0"
   },
   "autoload": {
     "psr-4": {
