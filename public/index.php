@@ -22,6 +22,7 @@ use Prooph\ServiceBus\CommandBus;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Rhumsaa\Uuid\Uuid;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -109,12 +110,15 @@ $app->post('/register', function (Request $request, Response $response, callable
 });
 
 $app->get('/build', function (Request $request, Response $response, callable $out = null) {
-    return $response->getBody()->write(<<<'HTML'
+
+    $buildId = Uuid::fromString($request->getQueryParams()['id']);
+
+    return $response->getBody()->write(<<<"HTML"
 
 <h1>Welcome to CQRS+ES building</h1>
 
 <h2>Check In: </h2>
-<form action="/checkin" method="post">
+<form action="/checkin?id={$buildId->toString()}" method="post">
     <select name="username" placeholder="Enter with your username">
       <option selected disabled>-- Choice someone --</option>
       <option value="ocramius">Ocramius</option>
@@ -125,7 +129,7 @@ $app->get('/build', function (Request $request, Response $response, callable $ou
 </form>
 
 <h2>Check Out: </h2>
-<form action="/checkout" method="post">
+<form action="/checkout?id={$buildId->toString()}" method="post">
     <select name="username" placeholder="Enter with your username">
       <option selected disabled>-- Choice someone --</option>
       <option value="ocramius">Ocramius</option>
@@ -141,16 +145,22 @@ HTML
 
 $app->post('/checkin', function (Request $request, Response $response, callable $out = null) use ($sm) {
     $commandBus = $sm->get(CommandBus::class);
-    $commandBus->dispatch(Command\CheckIn::fromUserName($request->getParsedBody()['username']));
+    $commandBus->dispatch(Command\CheckIn::fromBuildingIdAndUserName(
+        Uuid::fromString($request->getQueryParams()['id']),
+        $request->getParsedBody()['username'])
+    );
 
-    return $response->withAddedHeader('Location', '/');
+    return $response->withAddedHeader('Location', '/build?id=' . $request->getQueryParams()['id']);
 });
 
 $app->post('/checkout', function (Request $request, Response $response, callable $out = null) use ($sm) {
     $commandBus = $sm->get(CommandBus::class);
-    $commandBus->dispatch(Command\CheckOut::fromUserName($request->getParsedBody()['username']));
+    $commandBus->dispatch(Command\CheckOut::fromBuildingIdAndUserName(
+        $buildId = Uuid::fromString($request->getQueryParams()['id']),
+        $request->getParsedBody()['username'])
+    );
 
-    return $response->withAddedHeader('Location', '/');
+    return $response->withAddedHeader('Location', '/build?id=' . $request->getQueryParams()['id']);
 });
 
 
