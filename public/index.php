@@ -59,7 +59,7 @@ $sm = new \Zend\ServiceManager\ServiceManager([
             return $connection;
         },
 
-        EventStore::class => function (\Interop\Container\ContainerInterface $container) {
+        EventStore::class                  => function (\Interop\Container\ContainerInterface $container) {
             return new EventStore(
                 new \Prooph\EventStore\Adapter\Doctrine\DoctrineEventStoreAdapter(
                     $container->get(Connection::class),
@@ -72,34 +72,27 @@ $sm = new \Zend\ServiceManager\ServiceManager([
         },
 
         // Services
-        CommandBus::class => \Hanoi\Factory\Services\CommandBus::class,
+        CommandBus::class                  => \Hanoi\Factory\Services\CommandBus::class,
 
         // Command -> CommandHandlerFactory
-        Command\CheckIn::class => CommandHandlerFactory\CheckInHandlerFactory::class,
-        Command\CheckOut::class => CommandHandlerFactory\CheckOutHandlerFactory::class,
+        Command\CheckIn::class             => CommandHandlerFactory\CheckInHandlerFactory::class,
+        Command\CheckOut::class            => CommandHandlerFactory\CheckOutHandlerFactory::class,
         Command\RegisterNewBuilding::class => CommandHandlerFactory\RegisterNewBuildingHandlerFactory::class,
 
         BuildingRepository::class => function (\Interop\Container\ContainerInterface $container) {
             return new BuildingRepository($container->get(EventStore::class));
-        }
+        },
     ],
 ]);
 
 $app = Zend\Expressive\AppFactory::create($sm);
 
 $app->get('/', function (Request $request, Response $response, callable $out = null) {
-    return $response->getBody()->write(<<<'HTML'
+    ob_start();
+    require __DIR__ . '/../template/index.php';
+    $content = ob_get_clean();
 
-<h1>Register Building</h1>
-
-<form action="/register" method="post">
-    <input type="text" name="name" placeholder="Building name">
-
-    <button>Register</button>
-</form>
-
-HTML
-    );
+    return $response->getBody()->write($content);
 });
 
 $app->post('/register', function (Request $request, Response $response, callable $out = null) use ($sm) {
@@ -113,34 +106,11 @@ $app->get('/build', function (Request $request, Response $response, callable $ou
 
     $buildId = Uuid::fromString($request->getQueryParams()['id']);
 
-    return $response->getBody()->write(<<<"HTML"
+    ob_start();
+    require __DIR__ . '/../template/building.php';
+    $content = ob_get_clean();
 
-<h1>Welcome to CQRS+ES building</h1>
-
-<h2>Check In: </h2>
-<form action="/checkin?id={$buildId->toString()}" method="post">
-    <select name="username" placeholder="Enter with your username">
-      <option selected disabled>-- Choice someone --</option>
-      <option value="ocramius">Ocramius</option>
-      <option value="malukenho">Malukenho</option>
-    </select>
-
-    <button>CheckIn</button>
-</form>
-
-<h2>Check Out: </h2>
-<form action="/checkout?id={$buildId->toString()}" method="post">
-    <select name="username" placeholder="Enter with your username">
-      <option selected disabled>-- Choice someone --</option>
-      <option value="ocramius">Ocramius</option>
-      <option value="malukenho">Malukenho</option>
-    </select>
-    
-    <button>CheckOut</button>
-</form>
-
-HTML
-);
+    return $response->getBody()->write($content);
 });
 
 $app->post('/checkin', function (Request $request, Response $response, callable $out = null) use ($sm) {
