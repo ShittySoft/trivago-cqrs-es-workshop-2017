@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hanoi\Domain\Command;
 
 use Prooph\Common\Messaging\Command;
+use Rhumsaa\Uuid\Uuid;
 
 final class CheckIn extends Command
 {
@@ -18,22 +19,33 @@ final class CheckIn extends Command
      */
     private $username;
 
-    private function __construct(string $username)
+    /**
+     * @var Uuid
+     */
+    private $buildingId;
+
+    private function __construct(Uuid $buildingId, string $username)
     {
         $this->init();
 
         $this->currentTime = new \DateTimeImmutable();
         $this->username    = $username;
+        $this->buildingId  = $buildingId;
     }
 
-    public static function fromUserName(string $username) : self
+    public static function fromBuildingIdAndUserName(Uuid $buildingId, string $username) : self
     {
-        return new static($username);
+        return new static($buildingId, $username);
     }
 
     public function username() : string
     {
         return $this->username;
+    }
+
+    public function buildingId() : Uuid
+    {
+        return $this->buildingId;
     }
 
     /**
@@ -44,15 +56,19 @@ final class CheckIn extends Command
         return [
             'username'    => $this->username,
             'currentTime' => $this->currentTime->format('U'),
+            'buildingId'  => $this->buildingId->toString(),
         ];
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws \InvalidArgumentException
      */
     protected function setPayload(array $payload)
     {
         $this->currentTime = \DateTimeImmutable::createFromFormat('U', $payload['currentTime']);
         $this->username    = $payload['username'];
+        $this->buildingId  = Uuid::fromString($payload['buildingId']);
     }
 }
