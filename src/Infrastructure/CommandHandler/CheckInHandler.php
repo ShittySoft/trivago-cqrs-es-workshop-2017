@@ -22,10 +22,11 @@ final class CheckInHandler
 
     public function __invoke(CheckIn $command)
     {
-        $build = Building::new();
+        /** @var Building $build */
+        $build = $this->repository->get($command->buildingId());
 
         $build->checkInUser($command->username());
 
-        $this->repository->add($build);
+        $this->repository->addPendingEventsToStream();
     }
 }
