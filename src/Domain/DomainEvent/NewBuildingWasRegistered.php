@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hanoi\Domain\DomainEvent;
+namespace Building\Domain\DomainEvent;
 
 use Prooph\EventSourcing\AggregateChanged;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace Hanoi\Domain\Aggregate;
+namespace Building\Domain\Aggregate;
 
 use Assert\Assertion;
-use Hanoi\Domain\DomainEvent\NewBuildingWasRegistered;
-use Hanoi\Domain\DomainEvent\PersonCheckedIn;
-use Hanoi\Domain\DomainEvent\PersonCheckedOut;
+use Building\Domain\DomainEvent\NewBuildingWasRegistered;
+use Building\Domain\DomainEvent\PersonCheckedIn;
+use Building\Domain\DomainEvent\PersonCheckedOut;
 use Prooph\EventSourcing\AggregateRoot;
 use Rhumsaa\Uuid\Uuid;
 

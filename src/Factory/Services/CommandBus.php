@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hanoi\Factory\Services;
+namespace Building\Factory\Services;
 
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEvent;

@@ -7,11 +7,11 @@ ini_set('display_errors', '1');
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\SchemaException;
-use Hanoi\Domain\Aggregate\Building;
-use Hanoi\Domain\Command;
-use Hanoi\Infrastructure\CommandHandler;
-use Hanoi\Factory\CommandHandler as CommandHandlerFactory;
-use Hanoi\Infrastructure\Repository\BuildingRepository;
+use Building\Domain\Aggregate\Building;
+use Building\Domain\Command;
+use Building\Infrastructure\CommandHandler;
+use Building\Factory\CommandHandler as CommandHandlerFactory;
+use Building\Infrastructure\Repository\BuildingRepository;
 use Prooph\Common\Messaging\FQCNMessageFactory;
 use Prooph\Common\Messaging\NoOpMessageConverter;
 use Prooph\EventStore\Adapter\Doctrine\Schema\EventStoreSchema;
@@ -72,7 +72,7 @@ $sm = new \Zend\ServiceManager\ServiceManager([
         },
 
         // Services
-        CommandBus::class                  => \Hanoi\Factory\Services\CommandBus::class,
+        CommandBus::class                  => \Building\Factory\Services\CommandBus::class,
 
         // Command -> CommandHandlerFactory
         Command\CheckIn::class             => CommandHandlerFactory\CheckInHandlerFactory::class,

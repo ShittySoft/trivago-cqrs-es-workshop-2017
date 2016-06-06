@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Hanoi\Factory\CommandHandler;
+namespace Building\Factory\CommandHandler;
 
-use Hanoi\Infrastructure\CommandHandler\RegisterNewBuildingHandler;
-use Hanoi\Infrastructure\Repository\BuildingRepository;
+use Building\Infrastructure\CommandHandler\RegisterNewBuildingHandler;
+use Building\Infrastructure\Repository\BuildingRepository;
 use Interop\Container\ContainerInterface;
 
 final class RegisterNewBuildingHandlerFactory

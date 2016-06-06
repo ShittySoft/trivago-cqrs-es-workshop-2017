@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Hanoi\Infrastructure\CommandHandler;
+namespace Building\Infrastructure\CommandHandler;
 
-use Hanoi\Domain\Aggregate\Building;
-use Hanoi\Domain\Command\CheckOut;
-use Hanoi\Infrastructure\Repository\BuildingRepository;
+use Building\Domain\Aggregate\Building;
+use Building\Domain\Command\CheckOut;
+use Building\Infrastructure\Repository\BuildingRepository;
 
 final class CheckOutHandler
 {

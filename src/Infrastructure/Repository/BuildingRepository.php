@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Hanoi\Infrastructure\Repository;
+namespace Building\Infrastructure\Repository;
 
-use Hanoi\Domain\Aggregate\Building;
+use Building\Domain\Aggregate\Building;
 use Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator;
 use Prooph\EventStore\Aggregate\AggregateRepository;
 use Prooph\EventStore\Aggregate\AggregateType;

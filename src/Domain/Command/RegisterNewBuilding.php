@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hanoi\Domain\Command;
+namespace Building\Domain\Command;
 
 use Prooph\Common\Messaging\Command;
 
