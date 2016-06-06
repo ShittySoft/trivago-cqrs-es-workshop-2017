@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace BuildingTest\Domain\Command;
 
-use Building\Domain\Command\CheckIn;
+use Building\Domain\Command\CheckOut;
 use Rhumsaa\Uuid\Uuid;
 
 /**
- * Tests for {@see \Building\Domain\Command\CheckIn}.
+ * Tests for {@see \Building\Domain\Command\CheckOut}.
  *
- * @covers \Building\Domain\Command\CheckIn
+ * @covers \Building\Domain\Command\CheckOut
  */
-final class CheckInTest extends BaseCommandTest
+final class CheckOutTest extends BaseCommandTest
 {
     public function testFromBuildingIdAndUserName()
     {
         $buildingId = Uuid::uuid4();
         $username   = 'malukenho';
 
-        $command = CheckIn::fromBuildingIdAndUserName($buildingId, $username);
+        $command = CheckOut::fromBuildingIdAndUserName($buildingId, $username);
         self::assertInstanceOf(Uuid::class, $command->buildingId());
         self::assertSame($buildingId, $command->buildingId());
         self::assertSame($buildingId->toString(), $command->buildingId()->toString());
@@ -33,7 +33,7 @@ final class CheckInTest extends BaseCommandTest
     {
         return [
             [
-                CheckIn::fromBuildingIdAndUserName(Uuid::uuid4(), 'ocramius'),
+                CheckOut::fromBuildingIdAndUserName(Uuid::uuid4(), 'ocramius'),
             ],
         ];
     }
