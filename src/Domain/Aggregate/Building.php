@@ -3,7 +3,9 @@
 namespace Hanoi\Domain\Aggregate;
 
 use Assert\Assertion;
+use Hanoi\Domain\DomainEvent\NewBuildingWasRegistered;
 use Hanoi\Domain\DomainEvent\PersonCheckedIn;
+use Hanoi\Domain\DomainEvent\PersonCheckedOut;
 use Prooph\EventSourcing\AggregateRoot;
 use Rhumsaa\Uuid\Uuid;
 
@@ -20,11 +22,22 @@ final class Building extends AggregateRoot
      */
     private $uuid;
 
-    public static function new() : self
+    /**
+     * @var string
+     */
+    private $name;
+
+    public static function new($name) : self
     {
         $self = new self();
-
         $self->uuid = Uuid::uuid4();
+
+        $self->recordThat(NewBuildingWasRegistered::occur(
+            (string) $self->uuid,
+            [
+                'name' => $name
+            ]
+        ));
 
         return $self;
     }
@@ -43,6 +56,14 @@ final class Building extends AggregateRoot
 
     public function checkOutUser(string $username)
     {
+        Assertion::inArray($username, $this->checkedIn);
+
+        $this->recordThat(PersonCheckedOut::occur(
+            $this->aggregateId(),
+            [
+                'username' => $username,
+            ]
+        ));
     }
 
     public function whenPersonCheckedIn(PersonCheckedIn $event)
@@ -52,6 +73,20 @@ final class Building extends AggregateRoot
         unset($this->checkedOut[$key]);
 
         $this->checkedIn[] = $event->username();
+    }
+
+    public function whenPersonCheckedOut(PersonCheckedOut $event)
+    {
+        $key = array_search($event->username(), $this->checkedIn, true);
+
+        unset($this->checkedIn[$key]);
+
+        $this->checkedOut[] = $event->username();
+    }
+
+    public function whenNewBuildingWasRegistered(NewBuildingWasRegistered $event)
+    {
+        $this->name = $event->name();
     }
 
     /**
