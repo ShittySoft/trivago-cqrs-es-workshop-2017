@@ -86,7 +86,7 @@ $sm = new \Zend\ServiceManager\ServiceManager([
 
 $app = Zend\Expressive\AppFactory::create($sm);
 
-$app->get('/register', function (Request $request, Response $response, callable $out = null) {
+$app->get('/', function (Request $request, Response $response, callable $out = null) {
     return $response->getBody()->write(<<<'HTML'
 
 <h1>Register Building</h1>
