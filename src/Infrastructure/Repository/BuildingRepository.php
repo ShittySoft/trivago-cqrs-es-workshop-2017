@@ -14,8 +14,6 @@ final class BuildingRepository extends AggregateRepository
 {
     public function __construct(EventStore $eventStore)
     {
-        $eventStore->beginTransaction();
-
         parent::__construct(
             $eventStore,
             AggregateType::fromAggregateRootClass(Building::class),
