@@ -10,7 +10,7 @@ use Interop\Container\ContainerInterface;
 
 final class CheckInHandlerFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : CheckInHandler
     {
         return new CheckInHandler($container->get(BuildingRepository::class));
     }
