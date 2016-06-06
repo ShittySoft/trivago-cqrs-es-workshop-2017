@@ -23,8 +23,10 @@ final class CheckOutHandler
     public function __invoke(CheckOut $command)
     {
         /* @var Building $build */
-        $build = $this->repository->get();
+        $build = $this->repository->get($command->buildingId());
 
         $build->checkOutUser($command->username());
+
+        $this->repository->addPendingEventsToStream();
     }
 }
