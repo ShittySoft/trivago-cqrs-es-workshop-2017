@@ -27,6 +27,9 @@ final class CheckInHandler
 
         $build->checkInUser($command->username());
 
+        // @TODO do we do it like this, or
         $this->repository->addPendingEventsToStream();
+        // @TODO this:
+        //$this->repository->addAggregateRoot($build);
     }
 }
