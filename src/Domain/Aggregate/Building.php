@@ -30,10 +30,9 @@ final class Building extends AggregateRoot
     public static function new($name) : self
     {
         $self = new self();
-        $self->uuid = Uuid::uuid4();
 
         $self->recordThat(NewBuildingWasRegistered::occur(
-            (string) $self->uuid,
+            (string) Uuid::uuid4(),
             [
                 'name' => $name
             ]
