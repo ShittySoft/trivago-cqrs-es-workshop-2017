@@ -11,6 +11,7 @@ use Prooph\EventStore\Aggregate\AggregateType;
 use Prooph\EventStore\EventStore;
 use Rhumsaa\Uuid\Uuid;
 
+// @TODO move repository to domain, AVOID inheriting from logic at all costs
 final class BuildingRepository extends AggregateRepository
 {
     public function __construct(EventStore $eventStore)
