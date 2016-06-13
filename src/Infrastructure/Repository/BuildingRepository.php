@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Building\Infrastructure\Repository;
 
 use Building\Domain\Aggregate\Building;
+use Building\Domain\Repository\BuildingRepositoryInterface;
 use Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator;
 use Prooph\EventStore\Aggregate\AggregateRepository;
 use Prooph\EventStore\Aggregate\AggregateType;
 use Prooph\EventStore\EventStore;
 use Rhumsaa\Uuid\Uuid;
 
-// @TODO move repository to domain, AVOID inheriting from logic at all costs
-final class BuildingRepository extends AggregateRepository
+final class BuildingRepository extends AggregateRepository implements BuildingRepositoryInterface
 {
     public function __construct(EventStore $eventStore)
     {
@@ -28,7 +28,7 @@ final class BuildingRepository extends AggregateRepository
         $this->addAggregateRoot($building);
     }
 
-    public function get(Uuid $id)
+    public function get(Uuid $id) : Building
     {
         return $this->getAggregateRoot($id->toString());
     }
