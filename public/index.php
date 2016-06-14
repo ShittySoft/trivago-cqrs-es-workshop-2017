@@ -6,6 +6,7 @@ error_reporting(-1);
 ini_set('display_errors', '1');
 
 use Building\Domain\DomainEvent;
+use Building\Factory\Services\ProjectorService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\SchemaException;
 use Building\Domain\Aggregate\Building;
@@ -120,6 +121,9 @@ $sm = new \Zend\ServiceManager\ServiceManager([
             return $eventStore;
         },
 
+        // Projector
+        ProjectorService::class            => ProjectorService::class,
+
         // Services
         CommandBus::class                  => \Building\Factory\Services\CommandBus::class,
 
@@ -130,6 +134,8 @@ $sm = new \Zend\ServiceManager\ServiceManager([
 
         DomainEvent\PersonCheckedIn::class => EventHandlerFactory\PersonCheckedInEventHandlerFactory::class,
         DomainEvent\PersonCheckedOut::class => EventHandlerFactory\PersonCheckedOutEventHandlerFactory::class,
+
+        DomainEvent\PersonCheckedIn::class . '-projector' => \Building\Factory\ProjectorHandler\PersonCheckedInProjectorHandlerFactory::class,
 
         BuildingRepository::class => function (\Interop\Container\ContainerInterface $container) {
             return new BuildingRepository($container->get(EventStore::class));
