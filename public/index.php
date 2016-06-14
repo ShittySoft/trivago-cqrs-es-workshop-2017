@@ -5,21 +5,30 @@ declare(strict_types=1);
 error_reporting(-1);
 ini_set('display_errors', '1');
 
+use Building\Domain\DomainEvent;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\SchemaException;
 use Building\Domain\Aggregate\Building;
 use Building\Domain\Command;
 use Building\Infrastructure\CommandHandler;
 use Building\Factory\CommandHandler as CommandHandlerFactory;
+use Building\Factory\EventHandler as EventHandlerFactory;
 use Building\Infrastructure\Repository\BuildingRepository;
+use Interop\Container\ContainerInterface;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
+use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Messaging\FQCNMessageFactory;
 use Prooph\Common\Messaging\NoOpMessageConverter;
 use Prooph\EventStore\Adapter\Doctrine\Schema\EventStoreSchema;
 use Prooph\EventStore\Adapter\PayloadSerializer\JsonPayloadSerializer;
 use Prooph\EventStore\Aggregate\AggregateRepository;
 use Prooph\EventStore\EventStore;
+use Prooph\EventStoreBusBridge\EventPublisher;
 use Prooph\ServiceBus\CommandBus;
 
+use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\MessageBus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Rhumsaa\Uuid\Uuid;
@@ -60,7 +69,8 @@ $sm = new \Zend\ServiceManager\ServiceManager([
         },
 
         EventStore::class                  => function (\Interop\Container\ContainerInterface $container) {
-            return new EventStore(
+            $eventBus   = new EventBus();
+            $eventStore = new EventStore(
                 new \Prooph\EventStore\Adapter\Doctrine\DoctrineEventStoreAdapter(
                     $container->get(Connection::class),
                     new FQCNMessageFactory(),
@@ -69,6 +79,45 @@ $sm = new \Zend\ServiceManager\ServiceManager([
                 ),
                 new \Prooph\Common\Event\ProophActionEventEmitter()
             );
+
+            $eventBus->utilize(new class ($container) implements ActionEventListenerAggregate
+            {
+                /**
+                 * @var ContainerInterface
+                 */
+                private $eventHandlers;
+
+                public function __construct(ContainerInterface $projectors)
+                {
+                    $this->eventHandlers = $projectors;
+                }
+
+                public function attach(ActionEventEmitter $dispatcher)
+                {
+                    $dispatcher->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRoute']);
+                }
+
+                public function detach(ActionEventEmitter $dispatcher)
+                {
+                    throw new \BadMethodCallException('Not implemented');
+                }
+
+                public function onRoute(ActionEvent $actionEvent)
+                {
+                    $messageName = (string) $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+
+                    if ($this->eventHandlers->has($messageName)) {
+                        $actionEvent->setParam(
+                            EventBus::EVENT_PARAM_EVENT_LISTENERS,
+                            $this->eventHandlers->get($messageName)
+                        );
+                    }
+                }
+            });
+
+            (new EventPublisher($eventBus))->setUp($eventStore);
+
+            return $eventStore;
         },
 
         // Services
@@ -78,6 +127,9 @@ $sm = new \Zend\ServiceManager\ServiceManager([
         Command\CheckIn::class             => CommandHandlerFactory\CheckInHandlerFactory::class,
         Command\CheckOut::class            => CommandHandlerFactory\CheckOutHandlerFactory::class,
         Command\RegisterNewBuilding::class => CommandHandlerFactory\RegisterNewBuildingHandlerFactory::class,
+
+        DomainEvent\PersonCheckedIn::class => EventHandlerFactory\PersonCheckedInEventHandlerFactory::class,
+        DomainEvent\PersonCheckedOut::class => EventHandlerFactory\PersonCheckedOutEventHandlerFactory::class,
 
         BuildingRepository::class => function (\Interop\Container\ContainerInterface $container) {
             return new BuildingRepository($container->get(EventStore::class));
