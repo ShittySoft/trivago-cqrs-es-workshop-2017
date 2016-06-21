@@ -176,7 +176,7 @@ call_user_func(function () {
         $commandBus = $sm->get(CommandBus::class);
 
         $commandBus->dispatch(Command\CheckIn::fromBuildingIdAndUserName(
-            Uuid::fromString($request->getQueryParams()['id']),
+            $buildingId,
             $request->getParsedBody()['username'])
         );
 
