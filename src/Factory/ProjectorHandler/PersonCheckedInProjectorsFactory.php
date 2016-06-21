@@ -7,7 +7,7 @@ namespace Building\Factory\ProjectorHandler;
 use Building\Infrastructure\Projector\AddCheckedInUserToCurrentCheckedInUsers;
 use Interop\Container\ContainerInterface;
 
-final class PersonCheckedInProjectorHandlerFactory
+final class PersonCheckedInProjectorsFactory
 {
     public function __invoke(ContainerInterface $container)
     {

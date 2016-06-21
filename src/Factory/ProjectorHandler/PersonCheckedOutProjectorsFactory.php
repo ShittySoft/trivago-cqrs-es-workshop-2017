@@ -7,7 +7,7 @@ namespace Building\Factory\ProjectorHandler;
 use Building\Infrastructure\Projector\RemoveCheckedOutFromCurrentCheckedInUsers;
 use Interop\Container\ContainerInterface;
 
-final class PersonCheckedOutProjectorHandlerFactory
+final class PersonCheckedOutProjectorsFactory
 {
     public function __invoke(ContainerInterface $container)
     {

@@ -7,7 +7,7 @@ namespace Building\Factory\EventHandler;
 use Building\Infrastructure\EventHandler\PersonCheckedOutEventLog;
 use Interop\Container\ContainerInterface;
 
-final class PersonCheckedOutEventHandlerFactory
+final class PersonCheckedOutEventHandlersFactory
 {
     public function __invoke(ContainerInterface $container)
     {

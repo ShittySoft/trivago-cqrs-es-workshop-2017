@@ -147,11 +147,11 @@ call_user_func(function () {
             Command\CheckOut::class            => CommandHandlerFactory\CheckOutHandlerFactory::class,
             Command\RegisterNewBuilding::class => CommandHandlerFactory\RegisterNewBuildingHandlerFactory::class,
 
-            DomainEvent\PersonCheckedIn::class . '-listeners' => EventHandlerFactory\PersonCheckedInEventHandlerFactory::class,
-            DomainEvent\PersonCheckedOut::class . '-listeners' => EventHandlerFactory\PersonCheckedOutEventHandlerFactory::class,
+            DomainEvent\PersonCheckedIn::class . '-listeners' => EventHandlerFactory\PersonCheckedInEventHandlersFactory::class,
+            DomainEvent\PersonCheckedOut::class . '-listeners' => EventHandlerFactory\PersonCheckedOutEventHandlersFactory::class,
 
-            DomainEvent\PersonCheckedIn::class . '-projectors' => \Building\Factory\ProjectorHandler\PersonCheckedInProjectorHandlerFactory::class,
-            DomainEvent\PersonCheckedOut::class . '-projectors' => \Building\Factory\ProjectorHandler\PersonCheckedOutProjectorHandlerFactory::class,
+            DomainEvent\PersonCheckedIn::class . '-projectors' => \Building\Factory\ProjectorHandler\PersonCheckedInProjectorsFactory::class,
+            DomainEvent\PersonCheckedOut::class . '-projectors' => \Building\Factory\ProjectorHandler\PersonCheckedOutProjectorsFactory::class,
 
             BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
                 return new BuildingRepository(
