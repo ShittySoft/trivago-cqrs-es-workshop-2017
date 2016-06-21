@@ -2,29 +2,31 @@
 
 declare(strict_types=1);
 
-use Building\Domain\DomainEvent;
-use Building\Factory\Services\ProjectorService;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Schema\SchemaException;
 use Building\Domain\Aggregate\Building;
 use Building\Domain\Command;
-use Building\Infrastructure\CommandHandler;
+use Building\Domain\DomainEvent;
+use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Factory\CommandHandler as CommandHandlerFactory;
 use Building\Factory\EventHandler as EventHandlerFactory;
+use Building\Factory\Services\ProjectorService;
+use Building\Infrastructure\CommandHandler;
 use Building\Infrastructure\Repository\BuildingRepository;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Schema\SchemaException;
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Messaging\FQCNMessageFactory;
 use Prooph\Common\Messaging\NoOpMessageConverter;
+use Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator;
 use Prooph\EventStore\Adapter\Doctrine\Schema\EventStoreSchema;
 use Prooph\EventStore\Adapter\PayloadSerializer\JsonPayloadSerializer;
 use Prooph\EventStore\Aggregate\AggregateRepository;
+use Prooph\EventStore\Aggregate\AggregateType;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStoreBusBridge\EventPublisher;
 use Prooph\ServiceBus\CommandBus;
-
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -39,7 +41,7 @@ call_user_func(function () {
 
     $sm = new \Zend\ServiceManager\ServiceManager([
         'factories' => [
-            Connection::class => function (\Interop\Container\ContainerInterface $container) {
+            Connection::class => function (ContainerInterface $container) {
                 $connection = \Doctrine\DBAL\DriverManager::getConnection(
                     [
                         'driverClass' => \Doctrine\DBAL\Driver\PDOSqlite\Driver::class,
@@ -61,7 +63,7 @@ call_user_func(function () {
                 return $connection;
             },
 
-            EventStore::class                  => function (\Interop\Container\ContainerInterface $container) {
+            EventStore::class                  => function (ContainerInterface $container) {
                 $eventBus   = new EventBus();
                 $eventStore = new EventStore(
                     new \Prooph\EventStore\Adapter\Doctrine\DoctrineEventStoreAdapter(
@@ -129,12 +131,12 @@ call_user_func(function () {
 
             DomainEvent\PersonCheckedIn::class . '-projector' => \Building\Factory\ProjectorHandler\PersonCheckedInProjectorHandlerFactory::class,
 
-            BuildingRepository::class => function (\Interop\Container\ContainerInterface $container) {
+            BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
                 return new BuildingRepository(
                     new AggregateRepository(
                         $container->get(EventStore::class),
-                        \Prooph\EventStore\Aggregate\AggregateType::fromAggregateRootClass(Building::class),
-                        new \Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator()
+                        AggregateType::fromAggregateRootClass(Building::class),
+                        new AggregateTranslator()
                     )
                 );
             },
