@@ -6,6 +6,7 @@ namespace Building\Infrastructure\CommandHandler;
 
 use Building\Domain\Aggregate\Building;
 use Building\Domain\Command\RegisterNewBuilding;
+use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Infrastructure\Repository\BuildingRepository;
 
 final class RegisterNewBuildingHandler
@@ -15,15 +16,13 @@ final class RegisterNewBuildingHandler
      */
     private $repository;
 
-    public function __construct(BuildingRepository $repository)
+    public function __construct(BuildingRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
 
     public function __invoke(RegisterNewBuilding $command)
     {
-        $build = Building::new($command->name());
-
-        $this->repository->add($build);
+        $this->repository->add(Building::new($command->name()));
     }
 }

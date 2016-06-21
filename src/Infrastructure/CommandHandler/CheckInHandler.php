@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Building\Infrastructure\CommandHandler;
 
-use Building\Domain\Aggregate\Building;
 use Building\Domain\Command\CheckIn;
+use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Infrastructure\Repository\BuildingRepository;
 
 final class CheckInHandler
@@ -15,21 +15,17 @@ final class CheckInHandler
      */
     private $repository;
 
-    public function __construct(BuildingRepository $repository)
+    public function __construct(BuildingRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
 
     public function __invoke(CheckIn $command)
     {
-        /** @var Building $build */
-        $build = $this->repository->get($command->buildingId());
+        $building = $this->repository->get($command->buildingId());
 
-        $build->checkInUser($command->username());
+        $building->checkInUser($command->username());
 
-        // @TODO do we do it like this, or
-        $this->repository->addPendingEventsToStream();
-        // @TODO this:
-        //$this->repository->addAggregateRoot($build);
+        $this->repository->add($building);
     }
 }
