@@ -51,7 +51,7 @@ $sm = new \Zend\ServiceManager\ServiceManager([
             $connection = \Doctrine\DBAL\DriverManager::getConnection(
                 [
                     'driverClass' => \Doctrine\DBAL\Driver\PDOSqlite\Driver::class,
-                    'path'        => __DIR__ . '/db.sqlite3',
+                    'path'        => __DIR__ . '/../data/db.sqlite3',
                 ]
             );
 
