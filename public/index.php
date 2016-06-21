@@ -162,7 +162,7 @@ call_user_func(function () {
     });
 
     $app->get('/building/{buildingId}', function (Request $request, Response $response, callable $out = null) {
-        $buildingId = Uuid::fromString($request->getAttributes()['buildingId']);
+        $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
 
         ob_start();
         require __DIR__ . '/../template/building.php';
@@ -171,26 +171,33 @@ call_user_func(function () {
         return $response->getBody()->write($content);
     });
 
-    $app->post('/checkin', function (Request $request, Response $response, callable $out = null) use ($sm) {
+    $app->post('/checkin/{buildingId}', function (Request $request, Response $response, callable $out = null) use ($sm) {
+        $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
         $commandBus = $sm->get(CommandBus::class);
+
         $commandBus->dispatch(Command\CheckIn::fromBuildingIdAndUserName(
             Uuid::fromString($request->getQueryParams()['id']),
             $request->getParsedBody()['username'])
         );
 
-        return $response->withAddedHeader('Location', '/build?id=' . $request->getQueryParams()['id']);
+        return $response->withAddedHeader('Location', '/building/' . $buildingId);
     });
 
-    $app->post('/checkout', function (Request $request, Response $response, callable $out = null) use ($sm) {
+    $app->post('/checkout/{buildingId}', function (Request $request, Response $response, callable $out = null) use ($sm) {
+        $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
         $commandBus = $sm->get(CommandBus::class);
+
         $commandBus->dispatch(Command\CheckOut::fromBuildingIdAndUserName(
-            $buildId = Uuid::fromString($request->getQueryParams()['id']),
+            $buildingId,
             $request->getParsedBody()['username'])
         );
 
-        return $response->withAddedHeader('Location', '/build?id=' . $request->getQueryParams()['id']);
+        return $response->withAddedHeader('Location', '/building/' . $buildingId);
     });
 
+    $app->pipeErrorHandler(function () {
+        die(var_dump(func_get_args()));
+    });
 
     $app->run();
 });
