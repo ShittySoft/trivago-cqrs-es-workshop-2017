@@ -39,15 +39,6 @@ call_user_func(function () {
 
     $sm = new \Zend\ServiceManager\ServiceManager([
         'factories' => [
-            // Infrastructure
-            AggregateRepository::class => function (\Interop\Container\ContainerInterface $container) {
-                return new AggregateRepository(
-                    $container->get(EventStore::class),
-                    \Prooph\EventStore\Aggregate\AggregateType::fromAggregateRootClass(Building::class),
-                    new \Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator()
-                );
-            },
-
             Connection::class => function (\Interop\Container\ContainerInterface $container) {
                 $connection = \Doctrine\DBAL\DriverManager::getConnection(
                     [
@@ -139,7 +130,13 @@ call_user_func(function () {
             DomainEvent\PersonCheckedIn::class . '-projector' => \Building\Factory\ProjectorHandler\PersonCheckedInProjectorHandlerFactory::class,
 
             BuildingRepository::class => function (\Interop\Container\ContainerInterface $container) {
-                return new BuildingRepository($container->get(EventStore::class));
+                return new BuildingRepository(
+                    new AggregateRepository(
+                        $container->get(EventStore::class),
+                        \Prooph\EventStore\Aggregate\AggregateType::fromAggregateRootClass(Building::class),
+                        new \Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator()
+                    )
+                );
             },
         ],
     ]);
