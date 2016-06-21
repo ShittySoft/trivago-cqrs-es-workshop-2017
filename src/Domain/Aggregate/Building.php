@@ -3,18 +3,11 @@
 namespace Building\Domain\Aggregate;
 
 use Building\Domain\DomainEvent\NewBuildingWasRegistered;
-use Building\Domain\DomainEvent\PersonCheckedIn;
-use Building\Domain\DomainEvent\PersonCheckedOut;
 use Prooph\EventSourcing\AggregateRoot;
 use Rhumsaa\Uuid\Uuid;
 
 final class Building extends AggregateRoot
 {
-    /**
-     * @var string[]
-     */
-    private $peopleInTheBuilding  = [];
-
     /**
      * @var Uuid
      */

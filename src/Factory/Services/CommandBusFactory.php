@@ -10,14 +10,15 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStoreBusBridge\TransactionManager;
+use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 
 final class CommandBusFactory
 {
-    public function __invoke(ContainerInterface $container) : \Prooph\ServiceBus\CommandBus
+    public function __invoke(ContainerInterface $container) : CommandBus
     {
-        $commandBus = new \Prooph\ServiceBus\CommandBus();
+        $commandBus = new CommandBus();
 
         $commandBus->utilize(new ServiceLocatorPlugin($container));
         $commandBus->utilize($this->buildCommandRouter());
