@@ -8,6 +8,7 @@ use Building\Domain\DomainEvent;
 use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Factory\CommandHandler as CommandHandlerFactory;
 use Building\Factory\EventHandler as EventHandlerFactory;
+use Building\Factory\Services\CommandBusFactory;
 use Building\Factory\Services\ProjectorService;
 use Building\Infrastructure\CommandHandler;
 use Building\Infrastructure\Repository\BuildingRepository;
@@ -121,7 +122,7 @@ call_user_func(function () {
             ProjectorService::class            => ProjectorService::class,
 
             // Services
-            CommandBus::class                  => \Building\Factory\Services\CommandBus::class,
+            CommandBus::class                  => CommandBusFactory::class,
 
             // Command -> CommandHandlerFactory
             Command\CheckIn::class             => CommandHandlerFactory\CheckInHandlerFactory::class,

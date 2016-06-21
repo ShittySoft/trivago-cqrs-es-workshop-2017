@@ -13,7 +13,7 @@ use Prooph\EventStoreBusBridge\TransactionManager;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 
-final class CommandBus
+final class CommandBusFactory
 {
     public function __invoke(ContainerInterface $container) : \Prooph\ServiceBus\CommandBus
     {
