@@ -195,9 +195,5 @@ call_user_func(function () {
         return $response->withAddedHeader('Location', '/building/' . $buildingId);
     });
 
-    $app->pipeErrorHandler(function () {
-        die(var_dump(func_get_args()));
-    });
-
     $app->run();
 });
