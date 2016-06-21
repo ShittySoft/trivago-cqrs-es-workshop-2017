@@ -78,16 +78,24 @@ call_user_func(function () {
                     new ProophActionEventEmitter()
                 );
 
-                $eventBus->utilize(new class ($container) implements ActionEventListenerAggregate
+                $eventBus->utilize(new class ($container, $container) implements ActionEventListenerAggregate
                 {
                     /**
                      * @var ContainerInterface
                      */
                     private $eventHandlers;
 
-                    public function __construct(ContainerInterface $projectors)
-                    {
-                        $this->eventHandlers = $projectors;
+                    /**
+                     * @var ContainerInterface
+                     */
+                    private $projectors;
+
+                    public function __construct(
+                        ContainerInterface $eventHandlers,
+                        ContainerInterface $projectors
+                    ) {
+                        $this->eventHandlers = $eventHandlers;
+                        $this->projectors    = $projectors;
                     }
 
                     public function attach(ActionEventEmitter $dispatcher)
@@ -104,11 +112,21 @@ call_user_func(function () {
                     {
                         $messageName = (string) $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
-                        if ($this->eventHandlers->has($messageName)) {
-                            $actionEvent->setParam(
-                                EventBus::EVENT_PARAM_EVENT_LISTENERS,
-                                $this->eventHandlers->get($messageName)
-                            );
+                        $handlers = [];
+
+                        $listeners  = $messageName . '-listeners';
+                        $projectors = $messageName . '-projectors';
+
+                        if ($this->projectors->has($projectors)) {
+                            $handlers = array_merge($handlers, $this->eventHandlers->get($projectors));
+                        }
+
+                        if ($this->eventHandlers->has($listeners)) {
+                            $handlers = array_merge($handlers, $this->eventHandlers->get($listeners));
+                        }
+
+                        if ($handlers) {
+                            $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $handlers);
                         }
                     }
                 });
@@ -129,10 +147,10 @@ call_user_func(function () {
             Command\CheckOut::class            => CommandHandlerFactory\CheckOutHandlerFactory::class,
             Command\RegisterNewBuilding::class => CommandHandlerFactory\RegisterNewBuildingHandlerFactory::class,
 
-            DomainEvent\PersonCheckedIn::class => EventHandlerFactory\PersonCheckedInEventHandlerFactory::class,
-            DomainEvent\PersonCheckedOut::class => EventHandlerFactory\PersonCheckedOutEventHandlerFactory::class,
+            DomainEvent\PersonCheckedIn::class . '-listeners' => EventHandlerFactory\PersonCheckedInEventHandlerFactory::class,
+            DomainEvent\PersonCheckedOut::class . '-listeners' => EventHandlerFactory\PersonCheckedOutEventHandlerFactory::class,
 
-            DomainEvent\PersonCheckedIn::class . '-projector' => \Building\Factory\ProjectorHandler\PersonCheckedInProjectorHandlerFactory::class,
+            DomainEvent\PersonCheckedIn::class . '-projectors' => \Building\Factory\ProjectorHandler\PersonCheckedInProjectorHandlerFactory::class,
 
             BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
                 return new BuildingRepository(
