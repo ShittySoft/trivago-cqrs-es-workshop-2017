@@ -166,7 +166,7 @@ call_user_func(function () {
 
     $app = Zend\Expressive\AppFactory::create($sm);
 
-    $app->get('/', function (Request $request, Response $response, callable $out = null) {
+    $app->get('/', function (Request $request, Response $response) {
         ob_start();
         require __DIR__ . '/../template/index.php';
         $content = ob_get_clean();
@@ -174,14 +174,14 @@ call_user_func(function () {
         return $response->getBody()->write($content);
     });
 
-    $app->post('/register-new-building', function (Request $request, Response $response, callable $out = null) use ($sm) {
+    $app->post('/register-new-building', function (Request $request, Response $response) use ($sm) {
         $commandBus = $sm->get(CommandBus::class);
         $commandBus->dispatch(Command\RegisterNewBuilding::fromName($request->getParsedBody()['name']));
 
         return $response->withAddedHeader('Location', '/');
     });
 
-    $app->get('/building/{buildingId}', function (Request $request, Response $response, callable $out = null) {
+    $app->get('/building/{buildingId}', function (Request $request, Response $response) {
         $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
 
         ob_start();
@@ -191,7 +191,7 @@ call_user_func(function () {
         return $response->getBody()->write($content);
     });
 
-    $app->post('/checkin/{buildingId}', function (Request $request, Response $response, callable $out = null) use ($sm) {
+    $app->post('/checkin/{buildingId}', function (Request $request, Response $response) use ($sm) {
         $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
         $commandBus = $sm->get(CommandBus::class);
 
@@ -203,7 +203,7 @@ call_user_func(function () {
         return $response->withAddedHeader('Location', '/building/' . $buildingId);
     });
 
-    $app->post('/checkout/{buildingId}', function (Request $request, Response $response, callable $out = null) use ($sm) {
+    $app->post('/checkout/{buildingId}', function (Request $request, Response $response) use ($sm) {
         $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
         $commandBus = $sm->get(CommandBus::class);
 
