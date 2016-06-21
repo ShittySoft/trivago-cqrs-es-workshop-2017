@@ -151,7 +151,7 @@ call_user_func(function () {
         return $response->getBody()->write($content);
     });
 
-    $app->post('/register', function (Request $request, Response $response, callable $out = null) use ($sm) {
+    $app->post('/register-new-building', function (Request $request, Response $response, callable $out = null) use ($sm) {
         $commandBus = $sm->get(CommandBus::class);
         $commandBus->dispatch(Command\RegisterNewBuilding::fromName($request->getParsedBody()['name']));
 
