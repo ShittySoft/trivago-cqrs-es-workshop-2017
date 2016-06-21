@@ -19,9 +19,11 @@ use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\Common\Messaging\FQCNMessageFactory;
 use Prooph\Common\Messaging\NoOpMessageConverter;
 use Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator;
+use Prooph\EventStore\Adapter\Doctrine\DoctrineEventStoreAdapter;
 use Prooph\EventStore\Adapter\Doctrine\Schema\EventStoreSchema;
 use Prooph\EventStore\Adapter\PayloadSerializer\JsonPayloadSerializer;
 use Prooph\EventStore\Aggregate\AggregateRepository;
@@ -43,7 +45,7 @@ call_user_func(function () {
 
     $sm = new \Zend\ServiceManager\ServiceManager([
         'factories' => [
-            Connection::class => function (ContainerInterface $container) {
+            Connection::class => function () {
                 $connection = DriverManager::getConnection([
                     'driverClass' => Driver::class,
                     'path'        => __DIR__ . '/../data/db.sqlite3',
@@ -66,13 +68,13 @@ call_user_func(function () {
             EventStore::class                  => function (ContainerInterface $container) {
                 $eventBus   = new EventBus();
                 $eventStore = new EventStore(
-                    new \Prooph\EventStore\Adapter\Doctrine\DoctrineEventStoreAdapter(
+                    new DoctrineEventStoreAdapter(
                         $container->get(Connection::class),
                         new FQCNMessageFactory(),
                         new NoOpMessageConverter(),
                         new JsonPayloadSerializer()
                     ),
-                    new \Prooph\Common\Event\ProophActionEventEmitter()
+                    new ProophActionEventEmitter()
                 );
 
                 $eventBus->utilize(new class ($container) implements ActionEventListenerAggregate
