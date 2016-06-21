@@ -13,17 +13,9 @@
     "zendframework/zend-expressive-fastroute": "^1.0",
     "zendframework/zend-servicemanager": "^3.0"
   },
-  "require-dev": {
-    "phpunit/phpunit": "^4.7 || ^5.0"
-  },
   "autoload": {
     "psr-4": {
       "Building\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "BuildingTest\\": "tests/BuildingTest/"
     }
   },
   "scripts": {
