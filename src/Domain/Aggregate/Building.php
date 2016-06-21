@@ -2,7 +2,6 @@
 
 namespace Building\Domain\Aggregate;
 
-use Assert\Assertion;
 use Building\Domain\DomainEvent\NewBuildingWasRegistered;
 use Building\Domain\DomainEvent\PersonCheckedIn;
 use Building\Domain\DomainEvent\PersonCheckedOut;
@@ -42,42 +41,12 @@ final class Building extends AggregateRoot
 
     public function checkInUser(string $username)
     {
-        Assertion::false(in_array($username, $this->peopleInTheBuilding, true), 'Person is already checked in');
-
-        $this->recordThat(PersonCheckedIn::occur(
-            $this->aggregateId(),
-            [
-                'username' => $username,
-            ]
-        ));
+        // @TODO to be implemented
     }
 
     public function checkOutUser(string $username)
     {
-        Assertion::inArray($username, $this->peopleInTheBuilding, 'Person is not in the building');
-
-        $this->recordThat(PersonCheckedOut::occur(
-            $this->aggregateId(),
-            [
-                'username' => $username,
-            ]
-        ));
-    }
-
-    public function whenPersonCheckedIn(PersonCheckedIn $event)
-    {
-        $key = array_search($event->username(), $this->peopleInTheBuilding, true);
-
-        unset($this->peopleInTheBuilding[$key]);
-
-        $this->peopleInTheBuilding[] = $event->username();
-    }
-
-    public function whenPersonCheckedOut(PersonCheckedOut $event)
-    {
-        $key = array_search($event->username(), $this->peopleInTheBuilding, true);
-
-        unset($this->peopleInTheBuilding[$key]);
+        // @TODO to be implemented
     }
 
     public function whenNewBuildingWasRegistered(NewBuildingWasRegistered $event)

@@ -7,11 +7,7 @@ use Building\Domain\Command;
 use Building\Domain\DomainEvent;
 use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Factory\CommandHandler as CommandHandlerFactory;
-use Building\Factory\EventHandler as EventHandlerFactory;
-use Building\Factory\ProjectorHandler\PersonCheckedInProjectorsFactory;
-use Building\Factory\ProjectorHandler\PersonCheckedOutProjectorsFactory;
 use Building\Factory\Services\CommandBusFactory;
-use Building\Factory\Services\ProjectorService;
 use Building\Infrastructure\CommandHandler;
 use Building\Infrastructure\Repository\BuildingRepository;
 use Doctrine\DBAL\Connection;
@@ -140,23 +136,11 @@ call_user_func(function () {
                 return $eventStore;
             },
 
-            // Projector
-            ProjectorService::class            => ProjectorService::class,
-
             // Services
             CommandBus::class                  => CommandBusFactory::class,
 
             // Command -> CommandHandlerFactory
-            Command\CheckIn::class             => CommandHandlerFactory\CheckInHandlerFactory::class,
-            Command\CheckOut::class            => CommandHandlerFactory\CheckOutHandlerFactory::class,
             Command\RegisterNewBuilding::class => CommandHandlerFactory\RegisterNewBuildingHandlerFactory::class,
-
-            DomainEvent\PersonCheckedIn::class . '-listeners' => EventHandlerFactory\PersonCheckedInEventHandlersFactory::class,
-            DomainEvent\PersonCheckedOut::class . '-listeners' => EventHandlerFactory\PersonCheckedOutEventHandlersFactory::class,
-
-            DomainEvent\PersonCheckedIn::class . '-projectors' => PersonCheckedInProjectorsFactory::class,
-            DomainEvent\PersonCheckedOut::class . '-projectors' => PersonCheckedOutProjectorsFactory::class,
-
             BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
                 return new BuildingRepository(
                     new AggregateRepository(
@@ -197,27 +181,11 @@ call_user_func(function () {
     });
 
     $app->post('/checkin/{buildingId}', function (Request $request, Response $response) use ($sm) {
-        $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
-        $commandBus = $sm->get(CommandBus::class);
 
-        $commandBus->dispatch(Command\CheckIn::fromBuildingIdAndUserName(
-            $buildingId,
-            $request->getParsedBody()['username'])
-        );
-
-        return $response->withAddedHeader('Location', '/building/' . $buildingId);
     });
 
     $app->post('/checkout/{buildingId}', function (Request $request, Response $response) use ($sm) {
-        $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
-        $commandBus = $sm->get(CommandBus::class);
 
-        $commandBus->dispatch(Command\CheckOut::fromBuildingIdAndUserName(
-            $buildingId,
-            $request->getParsedBody()['username'])
-        );
-
-        return $response->withAddedHeader('Location', '/building/' . $buildingId);
     });
 
     $app->run();
