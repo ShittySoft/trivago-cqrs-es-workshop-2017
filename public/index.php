@@ -8,6 +8,8 @@ use Building\Domain\DomainEvent;
 use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Factory\CommandHandler as CommandHandlerFactory;
 use Building\Factory\EventHandler as EventHandlerFactory;
+use Building\Factory\ProjectorHandler\PersonCheckedInProjectorsFactory;
+use Building\Factory\ProjectorHandler\PersonCheckedOutProjectorsFactory;
 use Building\Factory\Services\CommandBusFactory;
 use Building\Factory\Services\ProjectorService;
 use Building\Infrastructure\CommandHandler;
@@ -37,6 +39,8 @@ use Prooph\ServiceBus\MessageBus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Rhumsaa\Uuid\Uuid;
+use Zend\Expressive\AppFactory;
+use Zend\ServiceManager\ServiceManager;
 
 call_user_func(function () {
     error_reporting(E_ALL);
@@ -44,7 +48,7 @@ call_user_func(function () {
 
     require_once __DIR__ . '/../vendor/autoload.php';
 
-    $sm = new \Zend\ServiceManager\ServiceManager([
+    $sm = new ServiceManager([
         'factories' => [
             Connection::class => function () {
                 $connection = DriverManager::getConnection([
@@ -150,8 +154,8 @@ call_user_func(function () {
             DomainEvent\PersonCheckedIn::class . '-listeners' => EventHandlerFactory\PersonCheckedInEventHandlersFactory::class,
             DomainEvent\PersonCheckedOut::class . '-listeners' => EventHandlerFactory\PersonCheckedOutEventHandlersFactory::class,
 
-            DomainEvent\PersonCheckedIn::class . '-projectors' => \Building\Factory\ProjectorHandler\PersonCheckedInProjectorsFactory::class,
-            DomainEvent\PersonCheckedOut::class . '-projectors' => \Building\Factory\ProjectorHandler\PersonCheckedOutProjectorsFactory::class,
+            DomainEvent\PersonCheckedIn::class . '-projectors' => PersonCheckedInProjectorsFactory::class,
+            DomainEvent\PersonCheckedOut::class . '-projectors' => PersonCheckedOutProjectorsFactory::class,
 
             BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
                 return new BuildingRepository(
@@ -165,7 +169,7 @@ call_user_func(function () {
         ],
     ]);
 
-    $app = Zend\Expressive\AppFactory::create($sm);
+    $app = AppFactory::create($sm);
 
     $app->get('/', function (Request $request, Response $response) {
         ob_start();
