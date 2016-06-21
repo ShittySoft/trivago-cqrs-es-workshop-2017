@@ -12,6 +12,8 @@ use Building\Factory\Services\ProjectorService;
 use Building\Infrastructure\CommandHandler;
 use Building\Infrastructure\Repository\BuildingRepository;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\PDOSqlite\Driver;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\SchemaException;
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEvent;
@@ -42,12 +44,10 @@ call_user_func(function () {
     $sm = new \Zend\ServiceManager\ServiceManager([
         'factories' => [
             Connection::class => function (ContainerInterface $container) {
-                $connection = \Doctrine\DBAL\DriverManager::getConnection(
-                    [
-                        'driverClass' => \Doctrine\DBAL\Driver\PDOSqlite\Driver::class,
-                        'path'        => __DIR__ . '/../data/db.sqlite3',
-                    ]
-                );
+                $connection = DriverManager::getConnection([
+                    'driverClass' => Driver::class,
+                    'path'        => __DIR__ . '/../data/db.sqlite3',
+                ]);
 
                 try {
                     $schema = $connection->getSchemaManager()->createSchema();
