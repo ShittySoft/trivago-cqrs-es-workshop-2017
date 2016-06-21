@@ -11,11 +11,10 @@ use Rhumsaa\Uuid\Uuid;
 
 final class Building extends AggregateRoot
 {
-    private $checkedIn  = [];
-    private $checkedOut = [
-        'malukenho',
-        'ocramius'
-    ];
+    /**
+     * @var string[]
+     */
+    private $peopleInTheBuilding  = [];
 
     /**
      * @var Uuid
@@ -43,7 +42,7 @@ final class Building extends AggregateRoot
 
     public function checkInUser(string $username)
     {
-        Assertion::inArray($username, $this->checkedOut);
+        Assertion::false(in_array($username, $this->peopleInTheBuilding, true), 'Person is already checked in');
 
         $this->recordThat(PersonCheckedIn::occur(
             $this->aggregateId(),
@@ -55,7 +54,7 @@ final class Building extends AggregateRoot
 
     public function checkOutUser(string $username)
     {
-        Assertion::inArray($username, $this->checkedIn);
+        Assertion::inArray($username, $this->peopleInTheBuilding, 'Person is not in the building');
 
         $this->recordThat(PersonCheckedOut::occur(
             $this->aggregateId(),
@@ -67,20 +66,18 @@ final class Building extends AggregateRoot
 
     public function whenPersonCheckedIn(PersonCheckedIn $event)
     {
-        $key = array_search($event->username(), $this->checkedOut, true);
+        $key = array_search($event->username(), $this->peopleInTheBuilding, true);
 
-        unset($this->checkedOut[$key]);
+        unset($this->peopleInTheBuilding[$key]);
 
-        $this->checkedIn[] = $event->username();
+        $this->peopleInTheBuilding[] = $event->username();
     }
 
     public function whenPersonCheckedOut(PersonCheckedOut $event)
     {
-        $key = array_search($event->username(), $this->checkedIn, true);
+        $key = array_search($event->username(), $this->peopleInTheBuilding, true);
 
-        unset($this->checkedIn[$key]);
-
-        $this->checkedOut[] = $event->username();
+        unset($this->peopleInTheBuilding[$key]);
     }
 
     public function whenNewBuildingWasRegistered(NewBuildingWasRegistered $event)
