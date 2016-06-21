@@ -6,7 +6,7 @@ namespace Building\Infrastructure\Projector;
 
 use Building\Domain\DomainEvent\PersonCheckedIn;
 
-final class WriteCheckedInUsersToCurrentCheckedInUsers
+final class AddCheckedInUserToCurrentCheckedInUsers
 {
     const FILE_PATH = __DIR__ . '/../../../public/%s.json';
 
