@@ -6,30 +6,28 @@ namespace Building\Infrastructure\Repository;
 
 use Building\Domain\Aggregate\Building;
 use Building\Domain\Repository\BuildingRepositoryInterface;
-use Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator;
 use Prooph\EventStore\Aggregate\AggregateRepository;
-use Prooph\EventStore\Aggregate\AggregateType;
-use Prooph\EventStore\EventStore;
 use Rhumsaa\Uuid\Uuid;
 
-final class BuildingRepository extends AggregateRepository implements BuildingRepositoryInterface
+final class BuildingRepository implements BuildingRepositoryInterface
 {
-    public function __construct(EventStore $eventStore)
+    /**
+     * @var AggregateRepository
+     */
+    private $aggregateRepository;
+
+    public function __construct(AggregateRepository $aggregateRepository)
     {
-        parent::__construct(
-            $eventStore,
-            AggregateType::fromAggregateRootClass(Building::class),
-            new AggregateTranslator()
-        );
+        $this->aggregateRepository = $aggregateRepository;
     }
 
     public function add(Building $building)
     {
-        $this->addAggregateRoot($building);
+        $this->aggregateRepository->addAggregateRoot($building);
     }
 
     public function get(Uuid $id) : Building
     {
-        return $this->getAggregateRoot($id->toString());
+        return $this->aggregateRepository->getAggregateRoot($id->toString());
     }
 }
