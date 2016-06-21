@@ -151,6 +151,7 @@ call_user_func(function () {
             DomainEvent\PersonCheckedOut::class . '-listeners' => EventHandlerFactory\PersonCheckedOutEventHandlerFactory::class,
 
             DomainEvent\PersonCheckedIn::class . '-projectors' => \Building\Factory\ProjectorHandler\PersonCheckedInProjectorHandlerFactory::class,
+            DomainEvent\PersonCheckedOut::class . '-projectors' => \Building\Factory\ProjectorHandler\PersonCheckedOutProjectorHandlerFactory::class,
 
             BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
                 return new BuildingRepository(
