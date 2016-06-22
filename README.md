@@ -2,6 +2,15 @@
 
 This is an example application aimed at teaching basic event sourcing.
 
+#### Requirements
+
+To run this application, you will need:
+
+ * [PHP 7](https://secure.php.net/downloads.php)
+ * [composer](https://getcomposer.org/)
+ * [ext-pdo](http://php.net/manual/en/book.pdo.php)
+ * [ext-pdo_sqlite](http://php.net/manual/en/ref.pdo-sqlite.php)
+
 #### Toolchain
 
 The tools that we are going to use are:
