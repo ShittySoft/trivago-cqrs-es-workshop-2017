@@ -24,11 +24,13 @@ The MVP of the application has following specification:
  * prevent people from double-leaving a building (security concern)
  * allow querying a list of people that are currently in the building
 
-The application has to be able to reject people
+#### Build steps
 
-Interactive part of the process:
+Following steps are to be implemented:
 
-- [ ] Create the middleware to `/result` page
-- [ ] Create a projector to save export information to a file, counting how much move was made to complete the game.
-- [ ] Trigger a new domain event like `ReportResultWasExported`
-- [ ] Send a fake mail when `ReportResultWasExported`
+- [x] Ability to register a new building (already provided)
+- [ ] Ability to check-in with a username and a building identifier (skeleton code provided)
+- [ ] Ability to check-out with a username and a building identifier (skeleton code provided)
+- [ ] Provide console output (STDERR) every time a check-in happens (event handler)
+- [ ] Provide console output (STDERR) every time a check-out happens (event handler)
+- [ ] Provide a file per building (accessible via HTTP) with usernames of currently checked-in persons
