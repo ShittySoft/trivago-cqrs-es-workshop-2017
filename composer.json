@@ -2,6 +2,7 @@
   "require": {
     "php": "^7.0",
     "ext-pdo": "*",
+    "ext-pdo_sqlite": "*",
     "doctrine/dbal": "~2.5",
     "prooph/event-sourcing": "~4.0",
     "prooph/event-store": "^6.0",
@@ -23,11 +24,6 @@
   "autoload-dev": {
     "psr-4": {
       "BuildingTest\\": "tests/BuildingTest/"
-    }
-  },
-  "config": {
-    "platform": {
-      "php": "5.5.99"
     }
   },
   "scripts": {
