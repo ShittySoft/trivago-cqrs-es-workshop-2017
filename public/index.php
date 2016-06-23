@@ -7,7 +7,6 @@ use Building\Domain\Command;
 use Building\Domain\DomainEvent;
 use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Factory\CommandHandler as CommandHandlerFactory;
-use Building\Factory\Services\CommandBusFactory;
 use Building\Infrastructure\CommandHandler;
 use Building\Infrastructure\CommandHandler\RegisterNewBuildingHandler;
 use Building\Infrastructure\Repository\BuildingRepository;
