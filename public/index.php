@@ -9,6 +9,7 @@ use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Factory\CommandHandler as CommandHandlerFactory;
 use Building\Factory\Services\CommandBusFactory;
 use Building\Infrastructure\CommandHandler;
+use Building\Infrastructure\CommandHandler\RegisterNewBuildingHandler;
 use Building\Infrastructure\Repository\BuildingRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOSqlite\Driver;
@@ -169,7 +170,9 @@ call_user_func(function () {
             },
 
             // Command -> CommandHandlerFactory
-            Command\RegisterNewBuilding::class => CommandHandlerFactory\RegisterNewBuildingHandlerFactory::class,
+            Command\RegisterNewBuilding::class => function (ContainerInterface $container) : RegisterNewBuildingHandler {
+                return new RegisterNewBuildingHandler($container->get(BuildingRepositoryInterface::class));
+            },
             BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
                 return new BuildingRepository(
                     new AggregateRepository(
