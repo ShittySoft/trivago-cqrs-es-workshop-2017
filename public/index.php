@@ -6,10 +6,7 @@ namespace Building\App;
 
 use Building\Domain\Aggregate\Building;
 use Building\Domain\Command;
-use Building\Domain\DomainEvent;
 use Building\Domain\Repository\BuildingRepositoryInterface;
-use Building\Infrastructure\CommandHandler;
-use Building\Infrastructure\CommandHandler\RegisterNewBuildingHandler;
 use Building\Infrastructure\Repository\BuildingRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOSqlite\Driver;
@@ -30,6 +27,7 @@ use Prooph\EventStore\Aggregate\AggregateRepository;
 use Prooph\EventStore\Aggregate\AggregateType;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStoreBusBridge\EventPublisher;
+use Prooph\EventStoreBusBridge\TransactionManager;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
@@ -38,7 +36,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Rhumsaa\Uuid\Uuid;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
-use Zend\Expressive\AppFactory;
 use Zend\Expressive\Application;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\WhoopsErrorHandler;
@@ -171,7 +168,7 @@ call_user_func(function () {
                     }
                 });
 
-                $transactionManager = new \Prooph\EventStoreBusBridge\TransactionManager();
+                $transactionManager = new TransactionManager();
                 $transactionManager->setUp($container->get(EventStore::class));
 
                 $commandBus->utilize($transactionManager);
