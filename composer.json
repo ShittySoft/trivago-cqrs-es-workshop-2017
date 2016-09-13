@@ -1,14 +1,15 @@
 {
   "require": {
     "php": "^7.0",
-    "bernard/bernard": "^0.12.3",
-    "doctrine/dbal": "~2.5",
     "ext-pdo": "*",
     "ext-pdo_sqlite": "*",
+    "bernard/bernard": "^1.0@DEV",
+    "doctrine/dbal": "~2.5",
     "prooph/event-sourcing": "~4.0",
     "prooph/event-store": "^6.0",
     "prooph/event-store-bus-bridge": "^2.0",
     "prooph/event-store-doctrine-adapter": "^3.0",
+    "prooph/psb-bernard-producer": "^2.0",
     "prooph/service-bus": "~5.0",
     "zendframework/zend-expressive": "^0.5.3",
     "zendframework/zend-expressive-fastroute": "^1.0",

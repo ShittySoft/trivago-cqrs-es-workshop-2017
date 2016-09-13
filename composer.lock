@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "324febf4214fa1880244e1ca6a6140ce",
+    "content-hash": "b02fdf92e4f3a1aefd177f81f3513412",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -67,56 +67,114 @@
         },
         {
             "name": "bernard/bernard",
-            "version": "0.12.3",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bernardphp/bernard.git",
-                "reference": "9442bf4b0e739e360f9b07b101d1dec8c87f1028"
+                "reference": "ec54820b006142f909e32d915b260749bb94ea04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bernardphp/bernard/zipball/9442bf4b0e739e360f9b07b101d1dec8c87f1028",
-                "reference": "9442bf4b0e739e360f9b07b101d1dec8c87f1028",
+                "url": "https://api.github.com/repos/bernardphp/bernard/zipball/ec54820b006142f909e32d915b260749bb94ea04",
+                "reference": "ec54820b006142f909e32d915b260749bb94ea04",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
-            },
-            "replace": {
-                "henrikbjorn/bernard": "self.version"
+                "beberlei/assert": "~2.1",
+                "bernard/normalt": "~1.0",
+                "php": "~5.4|~7.0",
+                "symfony/event-dispatcher": "~2.3|~3.0"
             },
             "require-dev": {
-                "aws/aws-sdk-php": "~2.4",
+                "aws/aws-sdk-php": "~2.4|~3.0",
                 "doctrine/dbal": "~2.3",
                 "iron-io/iron_mq": "~1.4",
-                "jms/serializer": "~0.12",
+                "league/container": "~1.0",
+                "pda/pheanstalk": "~3.0",
+                "php-amqplib/php-amqplib": "~2.5",
+                "phpspec/phpspec": "~2.0",
                 "pimple/pimple": "~1.0",
                 "predis/predis": "~0.8",
                 "psr/log": "~1.0",
-                "symfony/console": "~2.0",
-                "symfony/dependency-injection": "~2.0",
-                "symfony/serializer": "~2.2"
+                "symfony/console": "~2.3|~3.0",
+                "symfony/dependency-injection": "~2.3|~3.0"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Allow sending messages to AWS services like Simple Queue Service",
+                "doctrine/dbal": "Allow sending messages to simulated message queue in a database via doctrine dbal",
+                "iron-io/iron_mq": "Allow sending messages to IronMQ",
+                "mongodb/mongodb": "Allow sending messages to a MongoDB server via PHP Driver",
+                "pda/pheanstalk": "Allow sending messages to Beanstalk using pheanstalk",
+                "php-amqplib/php-amqplib": "Allow sending messages to an AMQP server using php-amqplib",
+                "predis/predis": "Allow sending messages to Redis using predis"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.10.x-dev"
+                    "dev-master": "1.0.x-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Bernard": "src/"
-                },
-                "files": [
-                    "src/Bernard/functions.php"
-                ]
+                "psr-4": {
+                    "Bernard\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Message queue implemented in PHP with Redis as a backend.",
-            "time": "2016-01-04 10:19:54"
+            "homepage": "https://github.com/bernardphp/bernard",
+            "keywords": [
+                "bernard",
+                "message",
+                "message queue",
+                "queue"
+            ],
+            "time": "2016-09-09 12:28:21"
+        },
+        {
+            "name": "bernard/normalt",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bernardphp/normalt.git",
+                "reference": "1cde16b1a2a5a20964c3e2fea66e2b98c3f57d41"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bernardphp/normalt/zipball/1cde16b1a2a5a20964c3e2fea66e2b98c3f57d41",
+                "reference": "1cde16b1a2a5a20964c3e2fea66e2b98c3f57d41",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/serializer": "^2.3 || ^3.0"
+            },
+            "require-dev": {
+                "doctrine/common": "^2.1",
+                "phpspec/phpspec": "^2.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Normalt\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Normalt is a extension to Symfony Serializer that only implements the Normalization part",
+            "keywords": [
+                "denormalization",
+                "normalization"
+            ],
+            "time": "2016-05-03 08:09:59"
         },
         {
             "name": "container-interop/container-interop",
@@ -1016,6 +1074,70 @@
             "time": "2016-06-28 19:49:20"
         },
         {
+            "name": "prooph/psb-bernard-producer",
+            "version": "v2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/prooph/psb-bernard-producer.git",
+                "reference": "69f7e69e10405376d3dfa65a2580d34e7d672a89"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/prooph/psb-bernard-producer/zipball/69f7e69e10405376d3dfa65a2580d34e7d672a89",
+                "reference": "69f7e69e10405376d3dfa65a2580d34e7d672a89",
+                "shasum": ""
+            },
+            "require": {
+                "bernard/bernard": "1.0.*@dev",
+                "php": "~5.5|~7.0",
+                "prooph/common": "^3.5"
+            },
+            "conflict": {
+                "prooph/psb-bernard-dispatcher": "*"
+            },
+            "require-dev": {
+                "doctrine/dbal": "~2.4",
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.7",
+                "prooph/service-bus": "dev-master",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Prooph\\ServiceBus\\Message\\Bernard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sascha-Oliver Prolic",
+                    "email": "saschaprolic@googlemail.com"
+                },
+                {
+                    "name": "Alexander Miertsch",
+                    "email": "contact@prooph.de",
+                    "homepage": "http://www.prooph.de"
+                },
+                {
+                    "name": "Guy Radford",
+                    "email": "guyr@gfrs.co.uk"
+                }
+            ],
+            "description": "Bernard Message Producer for Prooph Service Bus",
+            "homepage": "http://getprooph.org/",
+            "keywords": [
+                "bernard",
+                "cqrs",
+                "messaging",
+                "prooph"
+            ],
+            "time": "2016-08-22 20:00:38"
+        },
+        {
             "name": "prooph/service-bus",
             "version": "v5.2.0",
             "source": {
@@ -1202,6 +1324,139 @@
                 "uuid"
             ],
             "time": "2016-03-22 18:20:19"
+        },
+        {
+            "name": "symfony/event-dispatcher",
+            "version": "v3.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/event-dispatcher.git",
+                "reference": "c0c00c80b3a69132c4e55c3e7db32b4a387615e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/c0c00c80b3a69132c4e55c3e7db32b4a387615e5",
+                "reference": "c0c00c80b3a69132c4e55c3e7db32b4a387615e5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "psr/log": "~1.0",
+                "symfony/config": "~2.8|~3.0",
+                "symfony/dependency-injection": "~2.8|~3.0",
+                "symfony/expression-language": "~2.8|~3.0",
+                "symfony/stopwatch": "~2.8|~3.0"
+            },
+            "suggest": {
+                "symfony/dependency-injection": "",
+                "symfony/http-kernel": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\EventDispatcher\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony EventDispatcher Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-07-19 10:45:57"
+        },
+        {
+            "name": "symfony/serializer",
+            "version": "v3.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/serializer.git",
+                "reference": "81674b4a42507b6f3ba3a0661b35bfad8d25f841"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/serializer/zipball/81674b4a42507b6f3ba3a0661b35bfad8d25f841",
+                "reference": "81674b4a42507b6f3ba3a0661b35bfad8d25f841",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "conflict": {
+                "symfony/property-access": ">=3.0,<3.0.4|>=2.8,<2.8.4"
+            },
+            "require-dev": {
+                "doctrine/annotations": "~1.0",
+                "doctrine/cache": "~1.0",
+                "phpdocumentor/reflection-docblock": "~3.0",
+                "symfony/cache": "~3.1",
+                "symfony/config": "~2.8|~3.0",
+                "symfony/http-foundation": "~2.8|~3.0",
+                "symfony/property-access": "~2.8|~3.0",
+                "symfony/property-info": "~3.1",
+                "symfony/yaml": "~2.8|~3.0"
+            },
+            "suggest": {
+                "doctrine/annotations": "For using the annotation mapping. You will also need doctrine/cache.",
+                "doctrine/cache": "For using the default cached annotation reader and metadata cache.",
+                "psr/cache-implementation": "For using the metadata cache.",
+                "symfony/config": "For using the XML mapping loader.",
+                "symfony/http-foundation": "To use the DataUriNormalizer.",
+                "symfony/property-access": "For using the ObjectNormalizer.",
+                "symfony/property-info": "To deserialize relations.",
+                "symfony/yaml": "For using the default YAML mapping loader."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Serializer\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Serializer Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-08-19 15:12:52"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -1697,7 +1952,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "bernard/bernard": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
