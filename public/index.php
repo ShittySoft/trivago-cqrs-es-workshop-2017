@@ -180,8 +180,12 @@ call_user_func(function () {
             },
 
             // Command -> CommandHandlerFactory
-            Command\RegisterNewBuilding::class => function (ContainerInterface $container) : RegisterNewBuildingHandler {
-                return new RegisterNewBuildingHandler($container->get(BuildingRepositoryInterface::class));
+            Command\RegisterNewBuilding::class => function (ContainerInterface $container) : callable {
+                $buildings = $container->get(BuildingRepositoryInterface::class);
+
+                return function (Command\RegisterNewBuilding $command) use ($buildings) {
+                    $buildings->add(Building::new($command->name()));
+                };
             },
             BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
                 return new BuildingRepository(
