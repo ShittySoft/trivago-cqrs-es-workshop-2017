@@ -218,7 +218,9 @@ call_user_func(function () {
         require __DIR__ . '/../template/index.php';
         $content = ob_get_clean();
 
-        return $response->getBody()->write($content);
+        $response->getBody()->write($content);
+
+        return $response;
     });
 
     $app->post('/register-new-building', function (Request $request, Response $response) use ($sm) {
@@ -235,7 +237,9 @@ call_user_func(function () {
         require __DIR__ . '/../template/building.php';
         $content = ob_get_clean();
 
-        return $response->getBody()->write($content);
+        $response->getBody()->write($content);
+
+        return $response;
     });
 
     $app->post('/checkin/{buildingId}', function (Request $request, Response $response) use ($sm) {
