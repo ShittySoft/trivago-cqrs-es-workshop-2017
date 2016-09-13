@@ -31,6 +31,7 @@ use Prooph\EventStoreBusBridge\TransactionManager;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Rhumsaa\Uuid\Uuid;
@@ -147,7 +148,7 @@ call_user_func(function () {
             CommandBus::class                  => function (ContainerInterface $container) : CommandBus {
                 $commandBus = new CommandBus();
 
-                $commandBus->utilize(new \Prooph\ServiceBus\Plugin\ServiceLocatorPlugin($container));
+                $commandBus->utilize(new ServiceLocatorPlugin($container));
                 $commandBus->utilize(new class implements ActionEventListenerAggregate {
                     public function attach(ActionEventEmitter $dispatcher)
                     {
