@@ -43,6 +43,11 @@ call_user_func(function () {
 
     require_once __DIR__ . '/../vendor/autoload.php';
 
+
+    /////////////////////////////////
+    // DI Configuration (Services) //
+    /////////////////////////////////
+
     $sm = new ServiceManager([
         'factories' => [
             Connection::class => function () {
@@ -183,7 +188,13 @@ call_user_func(function () {
         ],
     ]);
 
+    //////////////////////////
+    // Routing/frontend/etc //
+    //////////////////////////
+
     $app = AppFactory::create($sm);
+
+    $app->pipeRoutingMiddleware();
 
     $app->get('/', function (Request $request, Response $response) {
         ob_start();
@@ -217,6 +228,8 @@ call_user_func(function () {
     $app->post('/checkout/{buildingId}', function (Request $request, Response $response) use ($sm) {
 
     });
+
+    $app->pipeDispatchMiddleware();
 
     $app->run();
 });
