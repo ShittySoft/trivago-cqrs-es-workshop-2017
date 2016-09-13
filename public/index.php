@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Building\App;
+
 use Building\Domain\Aggregate\Building;
 use Building\Domain\Command;
 use Building\Domain\DomainEvent;
@@ -34,7 +36,12 @@ use Prooph\ServiceBus\MessageBus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Rhumsaa\Uuid\Uuid;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 use Zend\Expressive\AppFactory;
+use Zend\Expressive\Application;
+use Zend\Expressive\Router\FastRouteRouter;
+use Zend\Expressive\WhoopsErrorHandler;
 use Zend\ServiceManager\ServiceManager;
 
 call_user_func(function () {
@@ -192,7 +199,15 @@ call_user_func(function () {
     // Routing/frontend/etc //
     //////////////////////////
 
-    $app = AppFactory::create($sm);
+    // Error handling so that our eyes don't bleed: don't do this in production!
+    $whoopsHandler = new PrettyPageHandler();
+    $whoops        = new Run();
+
+    $whoops->writeToOutput(false);
+    $whoops->allowQuit(false);
+    $whoops->pushHandler($whoopsHandler);
+
+    $app = new Application(new FastRouteRouter(), $sm, new WhoopsErrorHandler($whoops, $whoopsHandler));
 
     $app->pipeRoutingMiddleware();
 
@@ -231,5 +246,6 @@ call_user_func(function () {
 
     $app->pipeDispatchMiddleware();
 
+    $whoops->register();
     $app->run();
 });
