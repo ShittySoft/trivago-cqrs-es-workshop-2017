@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Building\App;
 
 use Bernard\Driver\FlatFileDriver;
+use Bernard\Producer;
 use Bernard\Queue;
+use Bernard\QueueFactory;
 use Bernard\QueueFactory\PersistentFactory;
 use Building\Domain\Aggregate\Building;
 use Building\Domain\Command;
@@ -31,11 +33,14 @@ use Prooph\EventStore\Aggregate\AggregateType;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStoreBusBridge\EventPublisher;
 use Prooph\EventStoreBusBridge\TransactionManager;
+use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Message\Bernard\BernardMessageProducer;
 use Prooph\ServiceBus\Message\Bernard\BernardSerializer;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Zend\ServiceManager\ServiceManager;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -166,11 +171,23 @@ return new ServiceManager([
 
         // ignore this - this is async stuff
         // we'll get to it later
-        Queue::class => function () : Queue {
-            return (new PersistentFactory(
+
+        QueueFactory::class => function () : QueueFactory {
+            return new PersistentFactory(
                 new FlatFileDriver(__DIR__ . '/data/bernard'),
                 new BernardSerializer(new FQCNMessageFactory(), new NoOpMessageConverter())
-            ))->create('commands');
+            );
+        },
+
+        Queue::class => function (ContainerInterface $container) : Queue {
+            return $container->get(QueueFactory::class)->create('commands');
+        },
+
+        MessageProducer::class => function (ContainerInterface $container) : MessageProducer {
+            return new BernardMessageProducer(
+                new Producer($container->get(QueueFactory::class),new EventDispatcher()),
+                'commands'
+            );
         },
 
         // Command -> CommandHandlerFactory
