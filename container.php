@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Building\App;
 
+use Bernard\Driver\FlatFileDriver;
+use Bernard\Queue;
+use Bernard\QueueFactory\PersistentFactory;
 use Building\Domain\Aggregate\Building;
 use Building\Domain\Command;
 use Building\Domain\Repository\BuildingRepositoryInterface;
@@ -30,6 +33,7 @@ use Prooph\EventStoreBusBridge\EventPublisher;
 use Prooph\EventStoreBusBridge\TransactionManager;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Message\Bernard\BernardSerializer;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 use Zend\ServiceManager\ServiceManager;
@@ -158,6 +162,14 @@ return new ServiceManager([
             $commandBus->utilize($transactionManager);
 
             return $commandBus;
+        },
+
+        // ignore this - this is async stuff we'll get to later
+        Queue::class => function () : Queue {
+            return (new PersistentFactory(
+                new FlatFileDriver(__DIR__ . '/data/bernard'),
+                new BernardSerializer(new FQCNMessageFactory(), new NoOpMessageConverter())
+            ))->create('commands');
         },
 
         // Command -> CommandHandlerFactory
