@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Building\Domain\Aggregate;
 
 use Building\Domain\DomainEvent\NewBuildingWasRegistered;
