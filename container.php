@@ -34,6 +34,7 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 use Zend\ServiceManager\ServiceManager;
 
+require_once __DIR__ . '/vendor/autoload.php';
 
 return new ServiceManager([
     'factories' => [
