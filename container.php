@@ -164,7 +164,8 @@ return new ServiceManager([
             return $commandBus;
         },
 
-        // ignore this - this is async stuff we'll get to later
+        // ignore this - this is async stuff
+        // we'll get to it later
         Queue::class => function () : Queue {
             return (new PersistentFactory(
                 new FlatFileDriver(__DIR__ . '/data/bernard'),
@@ -173,6 +174,7 @@ return new ServiceManager([
         },
 
         // Command -> CommandHandlerFactory
+        // this is where most of the work will be done (by you!)
         Command\RegisterNewBuilding::class => function (ContainerInterface $container) : callable {
             $buildings = $container->get(BuildingRepositoryInterface::class);
 
