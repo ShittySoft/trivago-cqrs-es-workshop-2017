@@ -20,7 +20,7 @@ final class Building extends AggregateRoot
      */
     private $name;
 
-    public static function new($name) : self
+    public static function new(string $name) : self
     {
         $self = new self();
 
