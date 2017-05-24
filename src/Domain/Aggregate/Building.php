@@ -8,6 +8,7 @@ use Building\Domain\DomainEvent\CheckInAnomalyDetected;
 use Building\Domain\DomainEvent\NewBuildingWasRegistered;
 use Building\Domain\DomainEvent\UserCheckedIn;
 use Building\Domain\DomainEvent\UserCheckedOut;
+use Building\Domain\UserBlacklistInterface;
 use Prooph\EventSourcing\AggregateRoot;
 use Rhumsaa\Uuid\Uuid;
 
@@ -40,8 +41,16 @@ final class Building extends AggregateRoot
         return $self;
     }
 
-    public function checkInUser(string $username)
+    public function checkInUser(string $username, UserBlacklistInterface $blacklistedUsers)
     {
+        if ($blacklistedUsers->isBlacklisted($username)) {
+            throw new \DomainException(sprintf(
+                'User "%s" is blacklisted and cant\'t enter building "%s"',
+                $username,
+                $this->uuid->toString()
+            ));
+        }
+
         $anomaly = \array_key_exists($username, $this->checkedInUsers);
 
         $this->recordThat(UserCheckedIn::fromBuildingIdAndUsername(

@@ -13,6 +13,8 @@ use Building\Domain\Aggregate\Building;
 use Building\Domain\Command;
 use Building\Domain\DomainEvent\CheckInAnomalyDetected;
 use Building\Domain\Repository\BuildingRepositoryInterface;
+use Building\Domain\UserBlacklistInterface;
+use Building\Infrastructure\ArrayBlacklist;
 use Building\Infrastructure\Repository\BuildingRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOSqlite\Driver;
@@ -201,12 +203,13 @@ return new ServiceManager([
             };
         },
         Command\CheckInUser::class => function (ContainerInterface $container) : callable {
-            $buildings = $container->get(BuildingRepositoryInterface::class);
+            $buildings   = $container->get(BuildingRepositoryInterface::class);
+            $blacklisted = $container->get(UserBlacklistInterface::class);
 
-            return function (Command\CheckInUser $command) use ($buildings) {
+            return function (Command\CheckInUser $command) use ($buildings, $blacklisted) {
                 $building = $buildings->get($command->buildingId());
 
-                $building->checkInUser($command->username());
+                $building->checkInUser($command->username(), $blacklisted);
 
                 $buildings->add($building);
             };
@@ -250,6 +253,12 @@ return new ServiceManager([
                     AggregateType::fromAggregateRootClass(Building::class),
                     new AggregateTranslator()
                 )
+            );
+        },
+        UserBlacklistInterface::class => function () : UserBlacklistInterface {
+            return new ArrayBlacklist(
+                'realDonaldTrump',
+                'mom'
             );
         },
     ],
