@@ -24,11 +24,9 @@ final class Building extends AggregateRoot
     {
         $self = new self();
 
-        $self->recordThat(NewBuildingWasRegistered::occur(
-            (string) Uuid::uuid4(),
-            [
-                'name' => $name
-            ]
+        $self->recordThat(NewBuildingWasRegistered::fromBuildingIdAndName(
+            Uuid::uuid4(),
+            $name
         ));
 
         return $self;
