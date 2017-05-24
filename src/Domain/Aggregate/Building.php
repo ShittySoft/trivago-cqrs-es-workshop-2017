@@ -52,6 +52,11 @@ final class Building extends AggregateRoot
         $this->name = $event->name();
     }
 
+    public function whenUserCheckedIn(UserCheckedIn $event)
+    {
+        // nothing
+    }
+
     /**
      * {@inheritDoc}
      */
