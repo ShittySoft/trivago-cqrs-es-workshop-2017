@@ -171,7 +171,50 @@ return new ServiceManager([
 
             $commandBus->utilize($transactionManager);
 
-            return $commandBus;
+            return new class ($commandBus) extends CommandBus
+            {
+                /**
+                 * @var CommandBus
+                 */
+                private $next;
+
+                public function __construct(CommandBus $next)
+                {
+                    $this->next = $next;
+                }
+
+                public function dispatch($command)
+                {
+                    // advanced logging infrastructure:
+                    var_dump($command);
+
+                    $this->next->dispatch($command);
+                }
+            };
+        },
+
+        'async-command-bus' => function (ContainerInterface $container) {
+            return new class ($container->get(MessageProducer::class)) extends CommandBus
+            {
+                /**
+                 * @var MessageProducer
+                 */
+                private $messageProducer;
+
+                public function __construct(MessageProducer $messageProducer)
+                {
+                    $this->messageProducer = $messageProducer;
+                }
+
+                public function dispatch($command)
+                {
+                    if ($command instanceof ReallyReallyExecuteItNowPlease) {
+                        // advanced synchronous execution logic
+                    }
+                    
+                    $this->messageProducer->__invoke($command);
+                }
+            };
         },
 
         // ignore this - this is async stuff
@@ -236,7 +279,7 @@ return new ServiceManager([
             };
         },
         CheckInAnomalyDetected::class . '-listeners' => function (ContainerInterface $container) : array {
-            $commandBus = $container->get(CommandBus::class);
+            $commandBus = $container->get('async-command-bus');
 
             return [
                 function (CheckInAnomalyDetected $anomaly) use ($commandBus) {

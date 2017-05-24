@@ -48,7 +48,7 @@ call_user_func(function () {
     });
 
     $app->post('/register-new-building', function (Request $request, Response $response) use ($sm) : Response {
-        $commandBus = $sm->get(CommandBus::class);
+        $commandBus = $sm->get('async-command-bus');
         $commandBus->dispatch(Command\RegisterNewBuilding::fromName($request->getParsedBody()['name']));
 
         return $response->withAddedHeader('Location', '/');
@@ -69,7 +69,7 @@ call_user_func(function () {
     $app->post('/checkin/{buildingId}', function (Request $request, Response $response) use ($sm) : Response {
         $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
 
-        $sm->get(CommandBus::class)->dispatch(Command\CheckInUser::fromBuildingIdAndUsername(
+        $sm->get('async-command-bus')->dispatch(Command\CheckInUser::fromBuildingIdAndUsername(
             $buildingId,
             $request->getParsedBody()['username']
         ));
@@ -80,7 +80,7 @@ call_user_func(function () {
     $app->post('/checkout/{buildingId}', function (Request $request, Response $response) use ($sm) : Response {
         $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
 
-        $sm->get(CommandBus::class)->dispatch(Command\CheckOutUser::fromBuildingIdAndUsername(
+        $sm->get('async-command-bus')->dispatch(Command\CheckOutUser::fromBuildingIdAndUsername(
             $buildingId,
             $request->getParsedBody()['username']
         ));
