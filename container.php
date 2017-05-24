@@ -12,6 +12,8 @@ use Bernard\QueueFactory\PersistentFactory;
 use Building\Domain\Aggregate\Building;
 use Building\Domain\Command;
 use Building\Domain\DomainEvent\CheckInAnomalyDetected;
+use Building\Domain\DomainEvent\UserCheckedIn;
+use Building\Domain\DomainEvent\UserCheckedOut;
 use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Infrastructure\Repository\BuildingRepository;
 use Doctrine\DBAL\Connection;
@@ -25,6 +27,7 @@ use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\Common\Messaging\FQCNMessageFactory;
 use Prooph\Common\Messaging\NoOpMessageConverter;
+use Prooph\EventSourcing\AggregateChanged;
 use Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator;
 use Prooph\EventStore\Adapter\Doctrine\DoctrineEventStoreAdapter;
 use Prooph\EventStore\Adapter\Doctrine\Schema\EventStoreSchema;
@@ -32,6 +35,7 @@ use Prooph\EventStore\Adapter\PayloadSerializer\JsonPayloadSerializer;
 use Prooph\EventStore\Aggregate\AggregateRepository;
 use Prooph\EventStore\Aggregate\AggregateType;
 use Prooph\EventStore\EventStore;
+use Prooph\EventStore\Stream\StreamName;
 use Prooph\EventStoreBusBridge\EventPublisher;
 use Prooph\EventStoreBusBridge\TransactionManager;
 use Prooph\ServiceBus\Async\MessageProducer;
@@ -241,6 +245,46 @@ return new ServiceManager([
                         $anomaly->username()
                     ));
                 },
+            ];
+        },
+        'checked-in-users-projector' => function (ContainerInterface $container) : callable {
+            $eventStore = $container->get(EventStore::class);
+
+            return function (AggregateChanged $event) use ($eventStore) {
+                $aggregateId = $event->aggregateId();
+                $history = $eventStore->loadEventsByMetadataFrom(
+                    new StreamName('event_stream'),
+                    [
+                        'aggregate_id' => $aggregateId,
+                    ]
+                );
+
+                $users = [];
+
+                foreach ($history as $recordedEvent) {
+                    if ($recordedEvent instanceof UserCheckedIn) {
+                        $users[$recordedEvent->username()] = null;
+                    }
+
+                    if ($recordedEvent instanceof UserCheckedOut) {
+                        unset($users[$recordedEvent->username()]);
+                    }
+                }
+
+                file_put_contents(
+                    __DIR__ . '/public/building-' . $aggregateId,
+                    json_encode(array_keys($users))
+                );
+            };
+        },
+        UserCheckedIn::class . '-projectors' => function (ContainerInterface $container) : array {
+            return [
+                $container->get('checked-in-users-projector'),
+            ];
+        },
+        UserCheckedOut::class . '-projectors' => function (ContainerInterface $container) : array {
+            return [
+                $container->get('checked-in-users-projector'),
             ];
         },
         BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
