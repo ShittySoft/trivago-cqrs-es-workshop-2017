@@ -1,0 +1,7 @@
+default:
+  suites:
+    building:
+      contexts:
+        - 'BuildingTest\Context\BuildingContext'
+      paths:
+        - 'feature/check-in-anomaly.feature'
