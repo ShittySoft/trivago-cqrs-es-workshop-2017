@@ -16,6 +16,11 @@ final class CheckInAnomalyDetected extends AggregateChanged
         return self::occur((string) $buildingId, ['username' => $username]);
     }
 
+    public function buildingId() : Uuid
+    {
+        return Uuid::fromString($this->aggregateId());
+    }
+
     public function username() : string
     {
         return $this->payload['username'];
